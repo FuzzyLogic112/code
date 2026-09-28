@@ -1,9 +1,50 @@
-# code
+# code · 双色球模拟器（Java）
+
+一个用 Java 写的双色球选号与开奖模拟程序：随机或手动选号，模拟一次开奖，按规则判断中奖等级并输出奖金。
+
+## 规则
+
+- 红球：1–33 中选 6 个不重复号码
+- 蓝球：1–16 中选 1 个号码
+
+| 奖级 | 中奖条件（红 + 蓝） | 程序内奖金 |
+| --- | --- | --- |
+| 一等奖 | 6 + 1 | 5,000,000 元 |
+| 二等奖 | 6 + 0 | 500,000 元 |
+| 三等奖 | 5 + 1 | 3,000 元 |
+| 四等奖 | 5 + 0 或 4 + 1 | 200 元 |
+| 五等奖 | 4 + 0 或 3 + 1 | 10 元 |
+| 六等奖 | 2 + 1、1 + 1 或 0 + 1 | 5 元 |
+
+一、二等奖在真实开奖中是浮动奖金，程序里用固定数值代替，仅作演示。
+
+## 运行
+
+需要 JDK 11 及以上。把下面的代码保存为 `DoubleColorBall.java`，然后：
+
+```bash
+javac DoubleColorBall.java
+java DoubleColorBall
+```
+
+输出示例：
+
+```
+您的投注：红球[3, 8, 15, 21, 27, 30] + 蓝球[9]
+开奖号码：红球[1, 8, 12, 21, 26, 33] + 蓝球[9]
+恭喜！您中了5元
+```
+
+默认是机选。想手动选号，把 `main` 里的两行 `manualSelectRed()` / `manualSelectBlue()` 取消注释，并注释掉上面两行机选即可。
+
+## 源码
+
+```java
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class DoubleColorBall {
-    // 中奖规则配置（单位：元）[5](@ref)
+    // 中奖规则配置（单位：元）
     private static final Map<Integer, Integer> PRIZE_RULES = new HashMap<>() {{
         put(1, 5_000_000);  // 一等奖：6+1
         put(2, 500_000);    // 二等奖：6+0
@@ -34,7 +75,7 @@ public class DoubleColorBall {
             "恭喜！您中了" + PRIZE_RULES.get(prizeLevel) + "元" : "未中奖");
     }
 
-    // 生成红球（1-33选6不重复）[1,5](@ref)
+    // 生成红球（1-33选6不重复）
     private static List<Integer> generateRedBalls() {
         Set<Integer> redBalls = new TreeSet<>();
         Random rand = new Random();
@@ -44,12 +85,12 @@ public class DoubleColorBall {
         return new ArrayList<>(redBalls);
     }
 
-    // 生成蓝球（1-16选1）[1,5](@ref)
+    // 生成蓝球（1-16选1）
     private static int generateBlueBall() {
         return new Random().nextInt(16) + 1;
     }
 
-    // 中奖等级判断（核心逻辑）[5,7](@ref)
+    // 中奖等级判断（核心逻辑）
     private static int checkPrize(List<Integer> userRed, int userBlue, 
                                  List<Integer> prizeRed, int prizeBlue) {
         // 计算红球匹配数
@@ -98,3 +139,4 @@ public class DoubleColorBall {
         return blue;
     }
 }
+```
